@@ -1,11 +1,6 @@
-import json, cv2, os
-from pprint import pprint
 import numpy as np
-from sklearn.model_selection import KFold
 import tensorflow as tf
-from copy import deepcopy
 from glob import glob
-from tqdm import tqdm
 
 """
 Gestión del dataset para entrenamiento

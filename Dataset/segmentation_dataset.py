@@ -2,7 +2,6 @@ import json
 import numpy as np
 import cv2
 import os
-from data_loader import DataManager
 
 
 def get_mask(path, classes):
@@ -30,8 +29,9 @@ def save_npy(path, data):
 
 
 if __name__ == '__main__':
-    DATASET_PATH = ""
-    DATASET_NAME = ""
+    DATASET_MASK_PATH = "/media/susi/Elements/Datasets/cityscapes/CityScapes_Original/gtFine_trainvaltest/gtFine"
+    DATASET_IMG_PATH = "/media/susi/Elements/Datasets/cityscapes/CityScapes_Original/leftImg8bit_trainvaltest/leftImg8bit"
+    DATASET_NAME = "CityScapes_road_car_segmentation"
 
     DIVISIONS = ["train", "val", "test"]
     classes = ['road', 'car']
@@ -39,7 +39,7 @@ if __name__ == '__main__':
     name_cont = 0
 
     for DIVISION in DIVISIONS:
-        path = os.path.join(DATASET_PATH, DIVISION)
+        path = os.path.join(DATASET_MASK_PATH, DIVISION)
         data = os.listdir(path)
         for d in data:
             data1 = os.listdir(os.path.join(path, d))
@@ -48,23 +48,30 @@ if __name__ == '__main__':
                     masks = get_mask(os.path.join(path, os.path.join(d, d1)), classes)
 
                     img_path = f'{d1.split("_")[0]}_{d1.split("_")[1]}_{d1.split("_")[2]}_leftImg8bit.png'
-                    img = cv2.imread(os.path.join(path, os.path.join(d, img_path)))
+                    img = cv2.imread(os.path.join(DATASET_IMG_PATH, os.path.join(DIVISION, os.path.join(d, img_path))))
 
-                    path_mask = ""
+
+                    path_mask = os.path.join(DATASET_NAME, os.path.join(DIVISION, "ys"))
                     try:
-                        os.mkdir(path_mask)
+                        os.makedirs(path_mask)
                     except OSError:
                         print("Creation of the directory masks failed")
                     else:
                         print("Successfully created the masks directory")
 
-                    path_img = ""
+                    path_mask = os.path.join(path_mask, str(name_cont)+".npy")
+
+                    path_img = os.path.join(DATASET_NAME, os.path.join(DIVISION, "xs"))
                     try:
-                        os.mkdir(path_img)
+                        os.makedirs(path_img)
                     except OSError:
-                        print("Creation of the directory failed")
+                        print("Creation of the directory img failed")
                     else:
-                        print("Successfully created the directory")
+                        print("Successfully created the img directory")
+
+                    path_img = os.path.join(path_img, str(name_cont)+".npy")
 
                     save_npy(path_mask, masks)
                     save_npy(path_img, img)
+
+                    name_cont = name_cont + 1
